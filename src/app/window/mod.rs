@@ -1,4 +1,6 @@
 mod imp;
+#[cfg(all(unix, not(target_os = "macos")))]
+mod x11;
 
 use gio::Settings;
 use glib::Object;
@@ -73,7 +75,34 @@ impl Window {
         self.settings()
             .set_string("lyric-display-mode", &display_mode)?;
 
+        #[cfg(all(unix, not(target_os = "macos")))]
+        if self.has_position_setting() {
+            if let Some(position) = x11::read_position(self) {
+                self.settings()
+                    .set_value("window-position", &Some(position).to_variant())?;
+            }
+        }
+
         Ok(())
+    }
+
+    #[cfg(all(unix, not(target_os = "macos")))]
+    fn has_position_setting(&self) -> bool {
+        // A locally rebuilt binary may still be using the previous installed schema.
+        self.settings()
+            .settings_schema()
+            .is_some_and(|schema| schema.has_key("window-position"))
+    }
+
+    #[cfg(all(unix, not(target_os = "macos")))]
+    pub(super) fn setup_x11_window(&self, always_on_top: bool) {
+        let position = self
+            .has_position_setting()
+            .then(|| self.settings().get::<Option<(i32, i32)>>("window-position"))
+            .flatten();
+        if always_on_top || position.is_some() {
+            x11::setup(self, position, always_on_top);
+        }
     }
 
     fn load_window_state(&self) {

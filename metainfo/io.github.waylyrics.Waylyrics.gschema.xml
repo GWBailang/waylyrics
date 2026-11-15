@@ -9,6 +9,10 @@
       <default>300</default>
       <summary>Default window height</summary>
     </key>
+    <key name="window-position" type="m(ii)">
+      <default>nothing</default>
+      <summary>Last position of the lyrics window in X11 root coordinates</summary>
+    </key>
     <key name="window-decorated" type="b">
       <default>true</default>
       <summary>enable GTK+ CSD</summary>

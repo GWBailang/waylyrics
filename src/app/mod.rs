@@ -26,6 +26,7 @@ pub fn build_main_window(
     respect_empty_line_as_gap: bool,
     skip_auto_search: bool,
     skip_taskbar: bool,
+    #[cfg(all(unix, not(target_os = "macos")))] always_on_top: bool,
     #[cfg(feature = "layer-shell")] layer_shell: bool,
     #[cfg(feature = "layer-shell")] layer_shell_anchor: crate::config::LayerShellAnchor,
 ) -> Window {
@@ -68,8 +69,6 @@ pub fn build_main_window(
         gtk::prelude::WidgetExt::realize(&window);
         set_skip_taskbar(&window, true);
     }
-
-    window.present();
 
     let above_label = Label::builder()
         .label("Waylyrics")
@@ -114,6 +113,10 @@ pub fn build_main_window(
     });
 
     window.set_icon_name(Some(crate::APP_ID_FIXED));
+
+    #[cfg(all(unix, not(target_os = "macos")))]
+    window.setup_x11_window(always_on_top);
+    window.present();
 
     window
 }

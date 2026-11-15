@@ -110,6 +110,10 @@ pub struct Config {
     /// has no effect on Wayland
     pub skip_taskbar: bool,
 
+    /// Start the main lyrics window above other windows on X11.
+    #[cfg(all(unix, not(target_os = "macos")))]
+    pub always_on_top: bool,
+
     /// whether to make main window a layer shell surface
     ///
     /// see https://wayland.app/protocols/wlr-layer-shell-unstable-v1
@@ -212,6 +216,8 @@ impl Default for Config {
             #[cfg(feature = "tray-icon")]
             show_tray_icon: true,
             skip_taskbar: false,
+            #[cfg(all(unix, not(target_os = "macos")))]
+            always_on_top: true,
             #[cfg(feature = "layer-shell")]
             layer_shell: true,
             #[cfg(feature = "layer-shell")]

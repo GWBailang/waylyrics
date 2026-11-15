@@ -207,6 +207,8 @@ fn build_ui(app: &Application) -> Result<()> {
         #[cfg(feature = "tray-icon")]
         show_tray_icon,
         skip_taskbar,
+        #[cfg(all(unix, not(target_os = "macos")))]
+        always_on_top,
         #[cfg(feature = "layer-shell")]
         layer_shell,
         #[cfg(feature = "layer-shell")]
@@ -261,6 +263,8 @@ fn build_ui(app: &Application) -> Result<()> {
         respect_empty_line_as_gap,
         skip_auto_search,
         skip_taskbar,
+        #[cfg(all(unix, not(target_os = "macos")))]
+        always_on_top,
         #[cfg(feature = "layer-shell")]
         layer_shell,
         #[cfg(feature = "layer-shell")]
